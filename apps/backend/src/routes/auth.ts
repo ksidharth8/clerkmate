@@ -1,6 +1,6 @@
 import { Router } from "express";
 import jwt from "jsonwebtoken";
-import { v4 as uuid } from "uuid";
+import { randomUUID } from "crypto";
 import { User, LoginToken } from "../models";
 import { env } from "../config/env";
 import { sendLoginEmail } from "../utils/mailer";
@@ -22,7 +22,7 @@ router.post("/login", async (req, res) => {
 		user = await User.create({ email });
 	}
 
-	const token = uuid();
+	const token = randomUUID();
 	const expiresAt = new Date(Date.now() + LOGIN_TOKEN_EXPIRY_MIN * 60 * 1000);
 
 	await LoginToken.create({

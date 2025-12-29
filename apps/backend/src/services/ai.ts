@@ -1,5 +1,4 @@
 // import OpenAI from 'openai'
-import fetch from "node-fetch";
 import { env } from "../config/env";
 
 const API_URL = "https://api.pawan.krd/v1/chat/completions";
@@ -20,6 +19,7 @@ const SYSTEM_PROMPT = `You are a professional engineering reporting assistant.
                         - Output must be factual and concise.`.trim();
 
 export async function generateWeeklySummary(input: string): Promise<string> {
+	const fetch = await import("node-fetch").then(m => m.default);
 	const res = await fetch(API_URL, {
 		method: "POST",
 		headers: {

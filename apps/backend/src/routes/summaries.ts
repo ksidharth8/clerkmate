@@ -3,7 +3,7 @@ import dayjs from "dayjs";
 import { requireAuth } from "../middlewares/auth";
 import { Standup, AISummary } from "../models";
 import { generateWeeklySummary } from "../services/ai";
-import crypto from "crypto";
+import * as crypto from "crypto";
 
 const router = Router();
 
