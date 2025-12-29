@@ -65,14 +65,18 @@ export default function LoginPage() {
 			<h1>ClerkMate Login</h1>
 
 			{step === "email" && (
-				<>
+				<div style={{ display: "flex", flexDirection: "column", gap: 8, maxWidth: 300 }}>
 					<input
 						placeholder="Email"
 						value={email}
 						onChange={(e) => setEmail(e.target.value)}
 					/>
 					<button onClick={submitEmail}>Send Login Token</button>
-				</>
+
+					<a href={`${process.env.NEXT_PUBLIC_API_BASE}/auth/google`}>
+						Continue with Google
+					</a>
+				</div>
 			)}
 
 			{step === "token" && (
