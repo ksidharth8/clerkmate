@@ -14,4 +14,7 @@ export const env = {
 	SMTP_FROM: process.env.SMTP_FROM!,
 	FRONTEND_URL: process.env.FRONTEND_URL!,
 	BACKEND_URL: process.env.BACKEND_URL!,
+	GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID!,
+	GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET!,
+	GOOGLE_REDIRECT_URI: process.env.GOOGLE_REDIRECT_URI!,
 };
