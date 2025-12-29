@@ -117,7 +117,6 @@ export default function SummariesPage() {
 							style={{
 								position: "sticky",
 								top: 0,
-								background: "#fff",
 								paddingBottom: 8,
 								marginBottom: 16,
 								borderBottom: "1px solid #eee",

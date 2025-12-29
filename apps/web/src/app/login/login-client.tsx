@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { apiFetch } from "@/lib/api";
 import { setToken } from "@/lib/auth";
 import { useAuthRedirect } from "@/lib/useAuthRedirect";
+import ThemeToggle from "../components/ThemeToggle";
 
 export default function LoginPage() {
 	const router = useRouter();
@@ -56,7 +57,11 @@ export default function LoginPage() {
 	}
 
 	return (
-		<main style={{ padding: 40 }}>
+		<main style={{ padding: 40, position: "relative" }}>
+			<div style={{ position: "absolute", top: 16, right: 16 }}>
+				<ThemeToggle />
+			</div>
+
 			<h1>ClerkMate Login</h1>
 
 			{step === "email" && (
@@ -87,6 +92,7 @@ export default function LoginPage() {
 					<p>Click the link to sign in.</p>
 
 					<a
+						style={{ textDecoration: "none", color: "inherit" }}
 						href="https://mail.google.com"
 						target="_blank"
 						rel="noreferrer"

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import "./globals.css";
 
 export default function RootLayout({
 	children,
@@ -11,7 +12,11 @@ export default function RootLayout({
 
 	useEffect(() => {
 		const saved = localStorage.getItem("theme") as "light" | "dark" | null;
-		if (saved) setTheme(saved);
+		const system = window.matchMedia("(prefers-color-scheme: dark)").matches
+			? "dark"
+			: "light";
+
+		setTheme(saved ?? system);
 	}, []);
 
 	useEffect(() => {
@@ -21,7 +26,9 @@ export default function RootLayout({
 
 	return (
 		<html lang="en">
-			<body>{children}</body>
+			<body>
+				<div data-theme-toggle={theme}>{children}</div>
+			</body>
 		</html>
 	);
 }

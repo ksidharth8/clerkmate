@@ -1,38 +1,62 @@
 "use client";
 
-import { ReactNode, useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { clearToken } from "@/lib/auth";
 import { useAuthRedirect } from "@/lib/useAuthRedirect";
+import ThemeToggle from "../components/ThemeToggle";
 
-export default function DashboardLayout({ children }: { children: ReactNode }) {
-	const router = useRouter();
+export default function DashboardLayout({
+	children,
+}: {
+	children: React.ReactNode;
+}) {
 	const ready = useAuthRedirect("protected");
+	const router = useRouter();
 
-	if (!ready) return <p>Loading…</p>;
+	const [theme, setTheme] = useState<"light" | "dark">("light");
+
+	useEffect(() => {
+		const saved = localStorage.getItem("theme") as "light" | "dark" | null;
+		if (saved) setTheme(saved);
+	}, []);
 
 	function logout() {
 		clearToken();
 		router.push("/login");
 	}
 
+	if (!ready) return <p>Loading…</p>;
+
 	return (
 		<div style={{ display: "flex", minHeight: "100vh" }}>
 			<aside
 				style={{
-					width: 200,
-					padding: 20,
-					borderRight: "1px solid #ccc",
+					width: 220,
+					padding: 16,
+					borderRight: "1px solid var(--border)",
 				}}
 			>
 				<h3>ClerkMate</h3>
 
+				<ThemeToggle />
+
 				<ul>
 					<li>
-						<a href="/dashboard/standups">Standups</a>
+						<a
+							style={{ color: "inherit", textDecoration: "none" }}
+							href="/dashboard/standups"
+						>
+							Standups
+						</a>
 					</li>
 					<li>
-						<a href="/dashboard/summaries">Summaries</a>
+						<a
+							style={{ color: "inherit", textDecoration: "none" }}
+							href="/dashboard/summaries"
+						>
+							Summaries
+						</a>
 					</li>
 				</ul>
 
@@ -41,26 +65,5 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
 
 			<main style={{ flex: 1, padding: 20 }}>{children}</main>
 		</div>
-	);
-}
-
-function ThemeToggle() {
-	const [theme, setTheme] = useState<"light" | "dark">(
-		(typeof window !== "undefined" &&
-			(localStorage.getItem("theme") as "light" | "dark")) ||
-			"light"
-	);
-
-	function toggle() {
-		const next = theme === "light" ? "dark" : "light";
-		setTheme(next);
-		localStorage.setItem("theme", next);
-		document.documentElement.dataset.theme = next;
-	}
-
-	return (
-		<button onClick={toggle} aria-label="Toggle theme">
-			{theme === "light" ? "🌙" : "☀️"}
-		</button>
 	);
 }
