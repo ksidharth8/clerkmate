@@ -14,8 +14,9 @@ export function requireAuth(req: Request, res: Response, next: NextFunction) {
 
 	try {
 		const payload = jwt.verify(token, JWT_SECRET, {
+			clockTolerance: 60,
 			issuer: "clerkmate-api",
-			audience: "clerkmate-cli",
+			audience: ["clerkmate-cli", "clerkmate-web"],
 		});
 		(req as any).user = payload;
 		next();

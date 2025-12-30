@@ -43,7 +43,7 @@ router.get("/google/callback", async (req, res) => {
 	const accessToken = jwt.sign(
 		{ sub: user._id.toString(), email: user.email },
 		env.JWT_SECRET!,
-		{ expiresIn: "7d", issuer: "clerkmate-api" }
+		{ expiresIn: "7d", issuer: "clerkmate-api",audience: "clerkmate-web" }
 	);
 
 	const redirectUrl = `${env.FRONTEND_URL}/login?token=${accessToken}`;
