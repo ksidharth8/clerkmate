@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { apiFetch } from "@/lib/api";
-import { setToken } from "@/lib/auth";
+import { clearToken, setToken } from "@/lib/auth";
 import { useAuthRedirect } from "@/lib/useAuthRedirect";
 import ThemeToggle from "../components/ThemeToggle";
 
@@ -21,6 +21,7 @@ export default function LoginPage() {
 	useEffect(() => {
 		const tokenFromUrl = searchParams.get("token");
 		if (tokenFromUrl) {
+			clearToken();
 			setToken(tokenFromUrl);
 			router.replace("/dashboard/standups");
 		}
