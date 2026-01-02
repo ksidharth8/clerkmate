@@ -20,6 +20,7 @@ router.post("/login", async (req, res) => {
 	let user = await User.findOne({ email });
 	if (!user) {
 		user = await User.create({ email });
+		console.info("[AUTH] New user created", { email });
 	}
 
 	const token = randomUUID();
@@ -30,10 +31,10 @@ router.post("/login", async (req, res) => {
 		token,
 		expiresAt,
 	});
-
+	
+	console.info("[AUTH] Login requested", { email });
 	await sendLoginEmail(email, token);
 
-	console.info("Login requested", { email });
 	res.json({
 		message: "Login token generated. Check email (console in dev).",
 	});
@@ -118,6 +119,10 @@ router.get("/verify-link", async (req, res) => {
 	await LoginToken.deleteOne({ _id: loginToken._id });
 
 	const redirectUrl = `${env.FRONTEND_URL}/login?token=${accessToken}`;
+
+	console.info("[AUTH] Login link verified", {
+		userId: user._id.toString(),
+	});
 
 	res.redirect(302, redirectUrl);
 });

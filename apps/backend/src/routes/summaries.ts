@@ -34,6 +34,12 @@ router.get("/latest", requireAuth, async (req, res) => {
 		endDate,
 	});
 
+	console.info("[SUMMARY] Latest summary fetched", {
+		userId: user.sub,
+		startDate,
+		endDate,
+	});
+
 	res.json({
 		summary: summary || null,
 	});
@@ -53,6 +59,11 @@ router.get("/", requireAuth, async (req, res) => {
 			_id: 0,
 		}
 	).sort({ updatedAt: -1 });
+
+	console.info("[SUMMARY] Summaries list fetched", {
+		userId: user.sub,
+		count: summaries.length,
+	});
 
 	res.json({ summaries });
 });
@@ -149,6 +160,13 @@ router.post("/generate", requireAuth, async (req, res) => {
 	);
 
 	console.info("[SUMMARY] Generate requested", {
+		userId: user.sub,
+		startDate,
+		endDate,
+		standupCount: standups.length,
+	});
+
+	console.info("[SUMMARY] Summary generated", {
 		userId: user.sub,
 		startDate,
 		endDate,

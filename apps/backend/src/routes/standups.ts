@@ -34,6 +34,11 @@ router.post("/sync", requireAuth, async (req, res) => {
 			{ upsert: true, new: true }
 		);
 
+		console.info("[STANDUPS] Standup synced", {
+			userId: user.sub,
+			date,
+		});
+
 		res.json({
 			status: "synced",
 			standup,
@@ -50,6 +55,11 @@ router.get("/", requireAuth, async (req, res) => {
 	const standups = await Standup.find({ userId: user.sub })
 		.sort({ date: -1 })
 		.limit(30);
+
+	console.info("[STANDUPS] Standups fetched", {
+		userId: user.sub,
+		count: standups.length,
+	});
 
 	res.json({ standups });
 });

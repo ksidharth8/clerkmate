@@ -1,15 +1,7 @@
-import nodemailer from "nodemailer";
+import { Resend } from "resend";
 import { env } from "../config/env";
 
-const transporter = nodemailer.createTransport({
-	host: env.SMTP_HOST,
-	port: Number(env.SMTP_PORT),
-	secure: true,
-	auth: {
-		user: env.SMTP_USER,
-		pass: env.SMTP_PASS,
-	},
-});
+const resend = new Resend(env.RESEND_API_KEY);
 
 export async function sendLoginEmail(email: string, token: string) {
 	const loginLink = `${env.BACKEND_URL}/auth/verify-link?token=${token}`;
@@ -85,18 +77,18 @@ If you did not request this, ignore this email.
 </html>
 `;
 
-	await transporter
-		.sendMail({
-			from: env.SMTP_FROM,
-			to: email,
-			subject: "Your ClerkMate Login Link",
-			text, // fallback
-			html,
-		})
-		.then(() => {
-			console.info(`Login email sent to ${email}`);
-		})
-		.catch((err) => {
-			console.error(`Failed to send login email to ${email}:`, err);
-		});
+	const { error } = await resend.emails.send({
+		from: env.EMAIL_FROM,
+		to: [email],
+		subject: "Your ClerkMate Login Link",
+		text,
+		html,
+	});
+
+	if (error) {
+		console.error(`Failed to send login email to ${email}:`, error);
+		throw new Error("Failed to send login email");
+	}
+
+	console.info(`Login email sent to ${email}`);
 }
