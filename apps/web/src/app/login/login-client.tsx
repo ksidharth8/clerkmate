@@ -17,6 +17,8 @@ export default function LoginPage() {
 	const [error, setError] = useState("");
 
 	const ready = useAuthRedirect("login");
+	const isCli = searchParams.get("source") === "cli";
+	const isDone = searchParams.get("done") === "1";
 
 	useEffect(() => {
 		const tokenFromUrl = searchParams.get("token");
@@ -57,6 +59,15 @@ export default function LoginPage() {
 		}
 	}
 
+	if (isCli && isDone) {
+		return (
+			<div style={{ textAlign: "center", marginTop: 80 }}>
+				<h2>✅ Logged in successfully</h2>
+				<p>Return to your terminal.</p>
+			</div>
+		);
+	}
+
 	return (
 		<main style={{ padding: 40, position: "relative" }}>
 			<div style={{ position: "absolute", top: 16, right: 16 }}>
@@ -66,7 +77,14 @@ export default function LoginPage() {
 			<h1>ClerkMate Login</h1>
 
 			{step === "email" && (
-				<div style={{ display: "flex", flexDirection: "column", gap: 8, maxWidth: 300 }}>
+				<div
+					style={{
+						display: "flex",
+						flexDirection: "column",
+						gap: 8,
+						maxWidth: 300,
+					}}
+				>
 					<input
 						placeholder="Email"
 						value={email}
