@@ -4,6 +4,9 @@ import db from '../utils/db.js'
 import {requestLogin, verifyToken, createCliSession, pollCliSession} from '../services/api.js'
 import open from 'open'
 import {saveAccessToken} from '../utils/auth.js'
+import { ENV } from '../config/env.js'
+
+const FRONTEND_URL = ENV.FRONTEND_URL
 
 export default class Login extends Command {
   static override description = 'Login to ClerkMate'
@@ -30,8 +33,7 @@ export default class Login extends Command {
     if (flags.web) {
       const {sessionId} = await createCliSession()
 
-      const loginUrl = `https://clerkmate.vercel.app/cli/login?session=${sessionId}`
-      // const loginUrl = `http://localhost:3000/cli/login?session=${sessionId}`
+      const loginUrl = `${FRONTEND_URL}/cli/login?session=${sessionId}`
 
       this.log('Opening browser to complete login...')
       await open(loginUrl)

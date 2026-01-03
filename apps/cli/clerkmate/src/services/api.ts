@@ -1,8 +1,8 @@
 import fetch from 'node-fetch'
 import {getAccessToken} from '../utils/auth.js'
+import { ENV } from '../config/env.js'
 
-// const API_BASE = 'https://clerkmate.onrender.com'
-const API_BASE = 'http://localhost:4000'
+const API_BASE = ENV.API_BASE_URL
 
 export async function syncStandup(standup: any) {
   const token = getAccessToken()
