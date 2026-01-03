@@ -1,7 +1,7 @@
 {
   "name": "clerkmate",
   "description": "Developer-first CLI for daily standups",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "author": "Kumar Sidharth",
   "bin": {
     "clerkmate": "bin/run.js"
@@ -72,8 +72,8 @@
     "topicSeparator": " ",
     "topics": {},
     "readme": {
-    "disabled": true
-  }
+      "disabled": true
+    }
   },
   "repository": {
     "type": "git",
