@@ -1,7 +1,9 @@
 import { Router } from "express";
 import jwt from "jsonwebtoken";
 import { randomUUID } from "crypto";
-import { User, LoginToken } from "../models";
+import dayjs from "dayjs";
+import { v4 as uuid } from "uuid";
+import { User, LoginToken, LoginSession } from "../models";
 import { env } from "../config/env";
 import { sendLoginEmail } from "../utils/mailer";
 
@@ -31,12 +33,12 @@ router.post("/login", async (req, res) => {
 		token,
 		expiresAt,
 	});
-	
+
 	console.info("[AUTH] Login requested", { email });
 	await sendLoginEmail(email, token);
 
 	res.json({
-		message: "Login token generated. Check email (console in dev).",
+		message: "Login token generated. Check email.",
 	});
 });
 
@@ -125,6 +127,37 @@ router.get("/verify-link", async (req, res) => {
 	});
 
 	res.redirect(302, redirectUrl);
+});
+
+// POST /auth/cli-session
+router.post("/cli-session", async (_req, res) => {
+	const sessionId = uuid();
+
+	await LoginSession.create({
+		sessionId,
+		expiresAt: dayjs().add(10, "minute").toDate(),
+	});
+
+	console.info("[AUTH] CLI session created");
+	res.json({ sessionId });
+});
+
+// GET /auth/cli-session/:id
+router.get("/cli-session/:id", async (req, res) => {
+	const session = await LoginSession.findOne({
+		sessionId: req.params.id,
+	});
+
+	if (!session) {
+		return res.status(404).json({ error: "Invalid session" });
+	}
+
+	if (!session.jwt) {
+		return res.status(202).json({ status: "pending" });
+	}
+
+	console.info("[AUTH] CLI session JWT retrieved");
+	res.json({ token: session.jwt });
 });
 
 export default router;

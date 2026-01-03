@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { OAuth2Client } from "google-auth-library";
 import jwt from "jsonwebtoken";
-import { User } from "../models";
+import { LoginSession, User } from "../models";
 import { env } from "../config/env";
 
 const router = Router();
@@ -12,16 +12,22 @@ const client = new OAuth2Client(
 	env.GOOGLE_REDIRECT_URI
 );
 
-router.get("/google", (_req, res) => {
+// GET /auth/google
+router.get("/google", (req, res) => {
+	const { session } = req.query;
+
 	const url = client.generateAuthUrl({
 		access_type: "offline",
 		scope: ["profile", "email"],
+		state: session ? String(session) : undefined,
 	});
+
 	res.redirect(url);
 });
 
+// GET /auth/google/callback
 router.get("/google/callback", async (req, res) => {
-	const { code } = req.query;
+	const { code, state } = req.query;
 	if (!code) return res.status(400).send("Missing code");
 
 	const { tokens } = await client.getToken(code as string);
@@ -43,11 +49,27 @@ router.get("/google/callback", async (req, res) => {
 	const accessToken = jwt.sign(
 		{ sub: user._id.toString(), email: user.email },
 		env.JWT_SECRET!,
-		{ expiresIn: "7d", issuer: "clerkmate-api",audience: "clerkmate-web" }
+		{
+			expiresIn: "7d",
+			issuer: "clerkmate-api",
+			audience: state ? "clerkmate-cli" : "clerkmate-web",
+		}
 	);
 
+	if (state) {
+		await LoginSession.findOneAndUpdate(
+			{ sessionId: state },
+			{ jwt: accessToken }
+		);
+		console.info(
+			"[AUTH] CLI session detected from Google OAuth, returning to CLI"
+		);
+		return res.redirect(`${env.FRONTEND_URL}/cli/success`);
+	}
 	const redirectUrl = `${env.FRONTEND_URL}/login?token=${accessToken}`;
-
+	console.info(
+		"[AUTH] Web session detected from Google OAuth, returning access token"
+	);
 	res.redirect(redirectUrl);
 });
 

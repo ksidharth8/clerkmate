@@ -159,13 +159,6 @@ router.post("/generate", requireAuth, async (req, res) => {
 		{ upsert: true, new: true }
 	);
 
-	console.info("[SUMMARY] Generate requested", {
-		userId: user.sub,
-		startDate,
-		endDate,
-		standupCount: standups.length,
-	});
-
 	console.info("[SUMMARY] Summary generated", {
 		userId: user.sub,
 		startDate,
