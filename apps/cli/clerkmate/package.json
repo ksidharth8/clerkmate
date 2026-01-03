@@ -1,0 +1,92 @@
+{
+  "name": "clerkmate",
+  "description": "Developer-first CLI for daily standups",
+  "version": "1.0.2",
+  "author": "Kumar Sidharth",
+  "bin": {
+    "clerkmate": "bin/run.js"
+  },
+  "bugs": "https://github.com/ksidharth8/clerkmate/issues",
+  "dependencies": {
+    "@oclif/core": "^4",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/node-fetch": "^2.6.13",
+    "@types/uuid": "^10.0.0",
+    "better-sqlite3": "^12.5.0",
+    "chalk": "^5.6.2",
+    "dayjs": "^1.11.19",
+    "inquirer": "^8.2.7",
+    "jsonwebtoken": "^9.0.3",
+    "marked": "^4.3.0",
+    "marked-terminal": "^5.2.0",
+    "node-fetch": "^3.3.2",
+    "open": "^11.0.0",
+    "uuid": "^13.0.0"
+  },
+  "devDependencies": {
+    "@eslint/compat": "^1",
+    "@oclif/prettier-config": "^0.2.1",
+    "@oclif/test": "^4",
+    "@types/better-sqlite3": "^7.6.13",
+    "@types/chai": "^4",
+    "@types/inquirer": "^9.0.9",
+    "@types/marked": "^5.0.2",
+    "@types/marked-terminal": "^6.1.1",
+    "@types/mocha": "^10",
+    "@types/node": "^18",
+    "chai": "^4",
+    "eslint": "^9",
+    "eslint-config-oclif": "^6",
+    "eslint-config-prettier": "^10",
+    "mocha": "^10",
+    "oclif": "^4",
+    "shx": "^0.3.3",
+    "ts-node": "^10",
+    "typescript": "^5"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "files": [
+    "./bin",
+    "./dist",
+    "./oclif.manifest.json"
+  ],
+  "homepage": "https://github.com/ksidharth8/clerkmate/tree/main/apps/cli/clerkmate",
+  "keywords": [
+    "oclif"
+  ],
+  "license": "MIT",
+  "main": "dist/index.js",
+  "type": "module",
+  "oclif": {
+    "bin": "clerkmate",
+    "binAliases": [
+      "cm"
+    ],
+    "dirname": "clerkmate",
+    "commands": "./dist/commands",
+    "plugins": [
+      "@oclif/plugin-help"
+    ],
+    "topicSeparator": " ",
+    "topics": {},
+    "readme": {
+    "disabled": true
+  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ksidharth8/clerkmate.git"
+  },
+  "scripts": {
+    "build": "shx rm -rf dist && tsc -b",
+    "lint": "eslint",
+    "postpack": "shx rm -f oclif.manifest.json",
+    "posttest": "npm run lint",
+    "prepack": "oclif manifest",
+    "test": "mocha --forbid-only \"test/**/*.test.ts\"",
+    "version": "git add README.md"
+  },
+  "types": "dist/index.d.ts"
+}
