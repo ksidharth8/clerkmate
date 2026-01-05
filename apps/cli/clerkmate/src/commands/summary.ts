@@ -1,5 +1,23 @@
 import {Command} from '@oclif/core'
+import {marked} from 'marked'
+import chalk from 'chalk'
+import {createRequire} from 'node:module'
 import {fetchLatestSummary, fetchWeeklySummary} from '../services/api.js'
+
+const require = createRequire(import.meta.url)
+const TerminalRenderer = require('marked-terminal').default ?? require('marked-terminal')
+const options = {
+  heading: (text: string) => `\n${chalk.bold.green(text.toUpperCase())}`,
+  strong: chalk.magenta.underline.bold,
+  showSectionPrefix: false,
+  tab: 0,
+}
+
+marked.setOptions({
+  mangle: false,
+  headerIds: false,
+  renderer: new TerminalRenderer(options),
+})
 
 export default class Summary extends Command {
   static override description = 'Display weekly summary'
@@ -13,13 +31,13 @@ export default class Summary extends Command {
       const latest = await fetchLatestSummary()
 
       if (latest.summary) {
-        this.log(latest.summary.summaryText)
+        this.log(marked.parse(latest.summary.summaryText))
         return
       }
 
       this.log('Generating weekly summary...\n')
       const {summary} = await fetchWeeklySummary()
-      this.log(summary.summaryText)
+      this.log(marked.parse(summary.summaryText))
     } catch (err: any) {
       this.error(err.message)
     }

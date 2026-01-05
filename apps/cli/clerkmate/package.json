@@ -1,10 +1,11 @@
 {
   "name": "clerkmate",
   "description": "Developer-first CLI for daily standups",
-  "version": "1.0.3",
+  "version": "1.0.5",
   "author": "Kumar Sidharth",
   "bin": {
-    "clerkmate": "bin/run.js"
+    "clerkmate": "bin/run.js",
+    "cm": "bin/run.js"
   },
   "bugs": "https://github.com/ksidharth8/clerkmate/issues",
   "dependencies": {
@@ -17,8 +18,8 @@
     "dayjs": "^1.11.19",
     "inquirer": "^8.2.7",
     "jsonwebtoken": "^9.0.3",
-    "marked": "^4.3.0",
-    "marked-terminal": "^5.2.0",
+    "marked": "^5.1.2",
+    "marked-terminal": "^6.2.0",
     "node-fetch": "^3.3.2",
     "open": "^11.0.0",
     "uuid": "^13.0.0"
@@ -61,9 +62,6 @@
   "type": "module",
   "oclif": {
     "bin": "clerkmate",
-    "binAliases": [
-      "cm"
-    ],
     "dirname": "clerkmate",
     "commands": "./dist/commands",
     "plugins": [
@@ -86,7 +84,7 @@
     "posttest": "npm run lint",
     "prepack": "oclif manifest",
     "test": "mocha --forbid-only \"test/**/*.test.ts\"",
-    "version": "git add README.md"
+    "version": "git add ."
   },
   "types": "dist/index.d.ts"
 }

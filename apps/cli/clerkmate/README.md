@@ -23,7 +23,8 @@ ClerkMate is a developer-first CLI tool that replaces messy daily standups with 
 
 ```sh-session
 $ npm install -g clerkmate
-$ clerkmate COMMAND
+$ clerkmate [COMMAND]
+$ cm [COMMAND] # alias
   running command...
 $ clerkmate --version
   clerkmate/1.0.0 darwin-arm64 node-v22.13.1
@@ -39,14 +40,18 @@ USAGE
 
 <!-- commands -->
 
-- [`clerkmate --help`](#clerkmate-help)
-- [`clerkmate log`](#clerkmate-log)
-- [`clerkmate login`](#clerkmate-login)
-- [`clerkmate logout`](#clerkmate-logout)
-- [`clerkmate logs`](#clerkmate-logs)
-- [`clerkmate summary`](#clerkmate-summary)
-- [`clerkmate sync`](#clerkmate-sync)
-- [`clerkmate whoami`](#clerkmate-whoami)
+- [clerkmate](#clerkmate)
+    - [About](#about)
+- [Usage](#usage)
+- [Commands](#commands)
+  - [`clerkmate --help`](#clerkmate---help)
+  - [`clerkmate log`](#clerkmate-log)
+  - [`clerkmate login`](#clerkmate-login)
+  - [`clerkmate logout`](#clerkmate-logout)
+  - [`clerkmate logs`](#clerkmate-logs)
+  - [`clerkmate summary`](#clerkmate-summary)
+  - [`clerkmate sync`](#clerkmate-sync)
+  - [`clerkmate whoami`](#clerkmate-whoami)
 
 ## `clerkmate --help`
 
