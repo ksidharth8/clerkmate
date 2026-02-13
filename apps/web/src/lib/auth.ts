@@ -1,5 +1,6 @@
 export function setToken(token: string) {
 	localStorage.setItem("clerkmate_token", token);
+	window.dispatchEvent(new Event("storage"));
 }
 
 export function getToken() {

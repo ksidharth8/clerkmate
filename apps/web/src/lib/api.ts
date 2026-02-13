@@ -5,7 +5,7 @@ type RequestInit = Parameters<typeof fetch>[1];
 export async function apiFetch(
 	path: string,
 	token: string,
-	options: RequestInit = {}
+	options: RequestInit = {},
 ) {
 	const res = await fetch(`${API_BASE}${path}`, {
 		...options,

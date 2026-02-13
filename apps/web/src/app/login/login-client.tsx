@@ -5,7 +5,16 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { apiFetch } from "@/lib/api";
 import { clearToken, setToken } from "@/lib/auth";
 import { useAuthRedirect } from "@/lib/useAuthRedirect";
-import ThemeToggle from "../components/ThemeToggle";
+
+import {
+	Card,
+	CardContent,
+	CardHeader,
+	CardTitle,
+	CardDescription,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 export default function LoginPage() {
 	const router = useRouter();
@@ -30,8 +39,13 @@ export default function LoginPage() {
 	}, [searchParams, router]);
 
 	if (!ready) {
-		return <p>Checking session…</p>;
+		return (
+			<div className="flex items-center justify-center min-h-screen text-muted-foreground">
+				Checking session…
+			</div>
+		);
 	}
+
 	async function submitEmail() {
 		setError("");
 		try {
@@ -61,76 +75,95 @@ export default function LoginPage() {
 
 	if (isCli && isDone) {
 		return (
-			<div style={{ textAlign: "center", marginTop: 80 }}>
-				<h2>✅ Logged in successfully</h2>
-				<p>Return to your terminal.</p>
+			<div className="flex items-center justify-center min-h-screen">
+				<Card className="w-full max-w-md text-center">
+					<CardHeader>
+						<CardTitle>✅ Logged in successfully</CardTitle>
+						<CardDescription>Return to your terminal.</CardDescription>
+					</CardHeader>
+				</Card>
 			</div>
 		);
 	}
 
 	return (
-		<main style={{ padding: 40, position: "relative" }}>
-			<div style={{ position: "absolute", top: 16, right: 16 }}>
-				<ThemeToggle />
-			</div>
+		<div className="min-h-screen flex items-center justify-center bg-background px-4 relative">
+			<Card className="w-full max-w-md">
+				<CardHeader>
+					<CardTitle>ClerkMate Login</CardTitle>
+					<CardDescription>
+						Sign in to access your standups and summaries
+					</CardDescription>
+				</CardHeader>
 
-			<h1>ClerkMate Login</h1>
+				<CardContent className="space-y-4">
+					{step === "email" && (
+						<>
+							<Input
+								placeholder="Enter your email"
+								value={email}
+								onChange={(e) => setEmail(e.target.value)}
+							/>
 
-			{step === "email" && (
-				<div
-					style={{
-						display: "flex",
-						flexDirection: "column",
-						gap: 8,
-						maxWidth: 300,
-					}}
-				>
-					<input
-						placeholder="Email"
-						value={email}
-						onChange={(e) => setEmail(e.target.value)}
-					/>
-					<button onClick={submitEmail}>Send Login Token</button>
+							<Button className="w-full" onClick={submitEmail}>
+								Send Login Link
+							</Button>
 
-					<a href={`${process.env.NEXT_PUBLIC_API_BASE}/auth/google`}>
-						Continue with Google
-					</a>
-				</div>
-			)}
+							<Button variant="outline" className="w-full" asChild>
+								<a
+									href={`${process.env.NEXT_PUBLIC_API_BASE}/auth/google`}
+								>
+									Continue with Google
+								</a>
+							</Button>
+						</>
+					)}
 
-			{step === "token" && (
-				<>
-					<input
-						placeholder="Paste login token"
-						value={tokenInput}
-						onChange={(e) => setTokenInput(e.target.value)}
-					/>
-					<button onClick={submitToken}>Verify</button>
-				</>
-			)}
+					{step === "emailSent" && (
+						<div className="space-y-4 text-sm">
+							<p className="text-muted-foreground">
+								We've sent a login link to your email.
+							</p>
 
-			{step === "emailSent" && (
-				<>
-					<p>We've sent a login link to your email.</p>
-					<p>Click the link to sign in.</p>
+							<Button variant="secondary" className="w-full" asChild>
+								<a
+									href="https://mail.google.com"
+									target="_blank"
+									rel="noreferrer"
+								>
+									Open Gmail
+								</a>
+							</Button>
 
-					<a
-						style={{ textDecoration: "none", color: "inherit" }}
-						href="https://mail.google.com"
-						target="_blank"
-						rel="noreferrer"
-					>
-						Open Gmail
-					</a>
+							<div className="text-center text-muted-foreground">Or</div>
 
-					<p style={{ marginTop: 16 }}>Or paste the token manually:</p>
-					<button onClick={() => setStep("token")}>
-						Enter token manually
-					</button>
-				</>
-			)}
+							<Button
+								variant="outline"
+								className="w-full"
+								onClick={() => setStep("token")}
+							>
+								Enter token manually
+							</Button>
+						</div>
+					)}
 
-			{error && <p style={{ color: "red" }}>{error}</p>}
-		</main>
+					{step === "token" && (
+						<>
+							<Input
+								placeholder="Paste login token"
+								value={tokenInput}
+								onChange={(e) => setTokenInput(e.target.value)}
+							/>
+
+							<Button className="w-full" onClick={submitToken}>
+								Verify
+							</Button>
+						</>
+					)}
+
+					{error && <p className="text-sm text-destructive">{error}</p>}
+				</CardContent>
+			</Card>
+		</div>
 	);
 }

@@ -1,33 +1,19 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import "./globals.css";
+import { Navbar } from "@/app/components/Navbar";
 
 export default function RootLayout({
 	children,
 }: {
 	children: React.ReactNode;
 }) {
-	const [theme, setTheme] = useState<"light" | "dark">("light");
-
-	useEffect(() => {
-		const saved = localStorage.getItem("theme") as "light" | "dark" | null;
-		const system = window.matchMedia("(prefers-color-scheme: dark)").matches
-			? "dark"
-			: "light";
-
-		setTheme(saved ?? system);
-	}, []);
-
-	useEffect(() => {
-		document.documentElement.dataset.theme = theme;
-		localStorage.setItem("theme", theme);
-	}, [theme]);
-
 	return (
 		<html lang="en">
-			<body>
-				<div data-theme-toggle={theme}>{children}</div>
+			<body className="min-h-screen flex flex-col bg-background text-foreground">
+				<Navbar />
+
+				<main className="flex-1">{children}</main>
 			</body>
 		</html>
 	);

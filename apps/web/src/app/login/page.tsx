@@ -1,12 +1,12 @@
-'use client'
+"use client";
 
-import { Suspense } from 'react'
-import LoginClient from './login-client'
+import { Suspense } from "react";
+import LoginClient from "./login-client";
 
 export default function LoginPage() {
-  return (
-    <Suspense fallback={<p>Loading…</p>}>
-      <LoginClient />
-    </Suspense>
-  )
+	return (
+		<Suspense fallback={<p>Loading…</p>}>
+			<LoginClient />
+		</Suspense>
+	);
 }

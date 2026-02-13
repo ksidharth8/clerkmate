@@ -2,8 +2,14 @@
 
 import { useEffect, useState } from "react";
 import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import { apiFetch } from "@/lib/api";
 import { getToken } from "@/lib/auth";
+
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
+import { Skeleton } from "@/components/ui/skeleton";
 
 type Summary = {
 	startDate: string;
@@ -21,7 +27,6 @@ export default function SummariesPage() {
 	async function load() {
 		try {
 			const token = getToken()!;
-
 			const latest = await apiFetch("/summaries/latest", token);
 			setCurrent(latest.summary);
 
@@ -45,8 +50,6 @@ export default function SummariesPage() {
 			await load();
 		} catch (e: any) {
 			setError(e.message);
-		} finally {
-			setLoading(false);
 		}
 	}
 
@@ -54,94 +57,123 @@ export default function SummariesPage() {
 		load();
 	}, []);
 
-	if (loading) return <p>Loading summaries…</p>;
+	if (loading) {
+		return (
+			<div className="space-y-4">
+				<Skeleton className="h-10 w-1/3" />
+				<Skeleton className="h-64 w-full" />
+			</div>
+		);
+	}
+
+	const cleaned = current
+		? current.summaryText
+				.replace(/^###\s*Weekly Summary.*\n?/i, "")
+				.replace(/^\*\*\s*Weekly Summary.*\*\*\n?/i, "")
+		: "";
 
 	return (
-		<div style={{ display: "flex", gap: 24 }}>
-			<aside
-				style={{
-					width: 260,
-					borderRight: "1px solid #ddd",
-					paddingRight: 16,
-				}}
-			>
-				<h3>This Week</h3>
-
-				{current ? (
-					<button
-						style={{
-							fontWeight: "bold",
-							marginBottom: 12,
-						}}
-						onClick={() => setCurrent(current)}
-					>
-						{current.startDate} → {current.endDate}
-					</button>
-				) : (
-					<button onClick={generate} disabled={loading}>
-						Generate
-					</button>
-				)}
-
-				<hr style={{ margin: "16px 0" }} />
-
-				<h3>Past Weeks</h3>
-
-				{list.map((s, i) => {
-					const active =
-						current &&
-						current.startDate === s.startDate &&
-						current.endDate === s.endDate;
-
-					return (
-						<div key={i} style={{ marginBottom: 8 }}>
-							<button
-								onClick={() => setCurrent(s)}
-								style={{
-									fontWeight: active ? "bold" : "normal",
-								}}
+		<div className="flex gap-8">
+			{/* Sidebar */}
+			<div className="w-72 space-y-4">
+				<Card>
+					<CardHeader>
+						<CardTitle className="text-sm">This Week</CardTitle>
+					</CardHeader>
+					<CardContent className="space-y-2">
+						{current ? (
+							<Button
+								variant="secondary"
+								className="w-full justify-start"
+								onClick={() => setCurrent(current)}
 							>
-								{s.startDate} → {s.endDate}
-							</button>
-						</div>
-					);
-				})}
-			</aside>
+								{current.startDate} → {current.endDate}
+							</Button>
+						) : (
+							<Button className="w-full" onClick={generate}>
+								Generate Summary
+							</Button>
+						)}
+					</CardContent>
+				</Card>
 
-			<main style={{ flex: 1 }}>
-				{error && <p style={{ color: "red" }}>{error}</p>}
+				<Card>
+					<CardHeader>
+						<CardTitle className="text-sm">Past Weeks</CardTitle>
+					</CardHeader>
+					<CardContent className="space-y-2">
+						{list.map((s, i) => {
+							const active =
+								current &&
+								current.startDate === s.startDate &&
+								current.endDate === s.endDate;
+
+							return (
+								<Button
+									key={i}
+									variant={active ? "default" : "ghost"}
+									className="w-full justify-start text-sm"
+									onClick={() => setCurrent(s)}
+								>
+									{s.startDate} → {s.endDate}
+								</Button>
+							);
+						})}
+					</CardContent>
+				</Card>
+			</div>
+
+			{/* Main Content */}
+			<div className="flex-1 space-y-4">
+				{error && <p className="text-sm text-destructive">{error}</p>}
 
 				{current ? (
-					<>
-						<header
-							style={{
-								position: "sticky",
-								top: 0,
-								paddingBottom: 8,
-								marginBottom: 16,
-								borderBottom: "1px solid #eee",
-							}}
-						>
-							<h2 style={{ marginBottom: 4 }}>Weekly Summary</h2>
-
-							<small style={{ color: "#666" }}>
+					<Card>
+						<CardHeader>
+							<CardTitle>Weekly Summary</CardTitle>
+							<p className="text-sm text-muted-foreground">
 								{current.startDate} → {current.endDate}
 								{current.updatedAt && (
 									<>
-										{" • "}
-										Last updated{" "}
+										{" • "}Last updated{" "}
 										{new Date(current.updatedAt).toLocaleString()}
 									</>
 								)}
-							</small>
-						</header>
+							</p>
+						</CardHeader>
 
-						<ReactMarkdown>{current.summaryText}</ReactMarkdown>
-					</>
+						<Separator />
+
+						<CardContent className="pt-6">
+							<div
+								className="
+		prose dark:prose-invert max-w-none
+		prose-headings:font-semibold
+		prose-headings:mt-10
+		prose-headings:mb-4
+		prose-p:leading-relaxed
+		prose-p:mb-4
+		prose-ul:my-4
+		prose-ul:list-disc
+		prose-ul:pl-6
+		prose-li:my-1
+		prose-strong:text-foreground
+		"
+							>
+								<ReactMarkdown remarkPlugins={[remarkGfm]}>
+									{cleaned}
+								</ReactMarkdown>
+							</div>
+						</CardContent>
+					</Card>
 				) : (
-					<p>No summary yet.</p>
+					<Card>
+						<CardContent className="p-6 text-center text-muted-foreground">
+							No summary available.
+						</CardContent>
+					</Card>
 				)}
-			</main>
+			</div>
 		</div>
 	);
 }

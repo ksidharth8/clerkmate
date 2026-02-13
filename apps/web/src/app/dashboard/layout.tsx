@@ -1,10 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { clearToken } from "@/lib/auth";
 import { useAuthRedirect } from "@/lib/useAuthRedirect";
-import ThemeToggle from "../components/ThemeToggle";
+import Link from "next/link";
+
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
+import { ThemeToggle } from "../components/ThemeToggle";
 
 export default function DashboardLayout({
 	children,
@@ -13,57 +16,50 @@ export default function DashboardLayout({
 }) {
 	const ready = useAuthRedirect("protected");
 	const router = useRouter();
-
-	const [theme, setTheme] = useState<"light" | "dark">("light");
-
-	useEffect(() => {
-		const saved = localStorage.getItem("theme") as "light" | "dark" | null;
-		if (saved) setTheme(saved);
-	}, []);
+	const pathname = usePathname();
 
 	function logout() {
 		clearToken();
 		router.push("/login");
 	}
 
-	if (!ready) return <p>Loading…</p>;
+	if (!ready) {
+		return (
+			<div className="flex items-center justify-center min-h-screen text-muted-foreground">
+				Loading...
+			</div>
+		);
+	}
+
+	const navItems = [
+		{ href: "/dashboard/standups", label: "Standups" },
+		{ href: "/dashboard/summaries", label: "Summaries" },
+	];
 
 	return (
-		<div style={{ display: "flex", minHeight: "100vh" }}>
-			<aside
-				style={{
-					width: 220,
-					padding: 16,
-					borderRight: "1px solid var(--border)",
-				}}
-			>
-				<h3>ClerkMate</h3>
-
-				<ThemeToggle />
-
-				<ul>
-					<li>
-						<a
-							style={{ color: "inherit", textDecoration: "none" }}
-							href="/dashboard/standups"
-						>
-							Standups
-						</a>
-					</li>
-					<li>
-						<a
-							style={{ color: "inherit", textDecoration: "none" }}
-							href="/dashboard/summaries"
-						>
-							Summaries
-						</a>
-					</li>
-				</ul>
-
-				<button onClick={logout}>Logout</button>
+		<div className="flex">
+			{/* Sidebar */}
+			<aside className="w-64 border-r bg-muted/40">
+				<div className="p-6 space-y-6">
+					<nav className="space-y-2">
+						{navItems.map((item) => (
+							<Button
+								key={item.href}
+								asChild
+								variant={pathname === item.href ? "default" : "ghost"}
+								className="w-full justify-start"
+							>
+								<Link href={item.href}>{item.label}</Link>
+							</Button>
+						))}
+					</nav>
+				</div>
 			</aside>
 
-			<main style={{ flex: 1, padding: 20 }}>{children}</main>
+			{/* Main Content */}
+			<main className="flex-1">
+				<div className="max-w-5xl mx-auto px-6 py-10">{children}</div>
+			</main>
 		</div>
 	);
 }
